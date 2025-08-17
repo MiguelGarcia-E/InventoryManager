@@ -1,4 +1,4 @@
-import { Icon, IconButton, Paper, Typography } from "@mui/material";
+import { Box, Icon, IconButton, Paper, Typography } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {
@@ -91,11 +91,19 @@ export default function CatalogueTable({
   }
 
   return (
-    <Paper
-      variant="outlined"
-      sx={{ height: "100%", width: "100%", p: 3, pb: 1 }}
+    <Box
+      sx={{
+        mx: "auto",
+        width: "100%",
+        p: 3,
+        border: "2px solid #ccc",
+        borderRadius: 2,
+        backgroundColor: "#fff",
+      }}
     >
-      <Typography variant="h5">{title}</Typography>
+      <Typography variant="h4" sx={{ mb: 1 }}>
+        {title}
+      </Typography>
       <DataGrid
         rows={rows} //Data
         columns={finalColumns} //Headers
@@ -105,12 +113,19 @@ export default function CatalogueTable({
         getRowClassName={getRowClassNameByDate}
         sx={{
           border: 0,
+          fontSize: "1rem",
+          "& .MuiDataGrid-cell": { fontSize: "1rem" }, //celda
+          "& .MuiDataGrid-columnHeaderTitle": {
+            fontSize: "1.1rem",
+            fontWeight: 600,
+          }, // headers
+          "& .MuiTablePagination-root": { fontSize: "0.9rem" }, // paginador
           "& .red-row": { backgroundColor: "#f00303ff", color: "white" },
           "& .orange-row": { backgroundColor: "#fc8b00ff" },
           "& .yellow-row": { backgroundColor: "#ffff30ff" },
           "& .green-row": { backgroundColor: "#83e502ff" },
         }}
       />
-    </Paper>
+    </Box>
   );
 }

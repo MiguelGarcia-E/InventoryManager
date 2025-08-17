@@ -8,7 +8,7 @@ interface TextFieldBoxProps {
 export default function TextFieldBox({
   lblString,
   fieldString,
-  labelWidth = 70,
+  labelWidth = 75,
   width,
 }: TextFieldBoxProps) {
   return (

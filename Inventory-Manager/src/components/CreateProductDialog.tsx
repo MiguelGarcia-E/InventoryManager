@@ -1,13 +1,5 @@
 import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  Autocomplete,
-  Box,
-  Button,
-  Dialog,
-  DialogTitle,
-  Typography,
-} from "@mui/material";
+import { Box, Button, Dialog, Typography } from "@mui/material";
 import TextFieldBox from "./TextFieldBox";
 import AutocompleteBox from "./AutocompleteBox";
 import { productCategories } from "../data/productData";

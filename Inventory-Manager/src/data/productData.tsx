@@ -93,3 +93,36 @@ export const ProductRows: ProductRow[] = [
     stock: 10,
   },
 ];
+
+export const SummaryRows = [
+  {
+    category: "Food",
+    units: 50,
+    value: 75,
+    avg: 1.5,
+  },
+  {
+    category: "Clothing",
+    units: 100,
+    value: 4500,
+    avg: 45,
+  },
+  {
+    category: "Electronics",
+    units: 30,
+    value: 15000,
+    avg: 500,
+  },
+  {
+    category: "Toys",
+    units: 20,
+    value: 600,
+    avg: 30,
+  },
+  {
+    category: "Overall",
+    units: 200,
+    value: 20175,
+    avg: 100.875,
+  },
+];

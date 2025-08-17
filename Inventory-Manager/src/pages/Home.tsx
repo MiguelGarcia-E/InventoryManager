@@ -7,8 +7,8 @@ import SearchCard from "../components/SearchCard";
 import { ProductColumns, ProductRows } from "../data/productData";
 import CatalogueTable from "../components/CatalogueTable";
 import React from "react";
-import CreateProductDialog from "../components/CreateProductdialog";
-import { set } from "zod";
+import CreateProductDialog from "../components/CreateProductDialog";
+import MetricsTable from "../components/MetricsTable";
 
 export default function Home() {
   const [openCreate, setOpenCreate] = React.useState(false);
@@ -35,7 +35,6 @@ export default function Home() {
         <SearchCard />
       </Box>
 
-      {/* Botón alineado a la izquierda */}
       <Box
         sx={{
           display: "flex",
@@ -50,7 +49,6 @@ export default function Home() {
         <CreateProductDialog open={openCreate} onClose={handleCloseCreate} />
       </Box>
 
-      {/* Tabla centrada */}
       <Box sx={{ mx: "auto", width: "100%" }}>
         <CatalogueTable
           title={"Product catalogue"}
@@ -59,6 +57,9 @@ export default function Home() {
           onDelete={(row) => alert(`Delete ${row.name}`)}
           onEdit={(row) => alert(`Edit ${row.name}`)}
         />
+      </Box>
+      <Box sx={{ mx: "auto", width: "100%" }}>
+        <MetricsTable title="Inventory Summary" />
       </Box>
     </Container>
   );

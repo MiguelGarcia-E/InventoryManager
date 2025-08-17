@@ -1,25 +1,24 @@
 import { Autocomplete, Box, TextField } from "@mui/material";
 
 interface AutocompleteBoxProps {
-  lblString: string;
-  fieldString: string;
-  options: string[];
-  labelWidth?: number | string; // mismo default que TextFieldBox
-  width?: number | string; // ancho del campo (e.g. "50%", 420)
-  maxWidth?: number | string; // límite opcional del campo
+  lblString: string; // label fijo
+  fieldString: string; // label del campo
+  options: string[]; // opciones del autocomplete
+  labelWidth?: number | string; // ancho del label fijo
+  width?: number | string; // ancho del campo
+  maxWidth?: number | string; // max ancho del campo
 }
 
 export default function AutocompleteBox({
   lblString,
   fieldString,
   options,
-  labelWidth = 70,
+  labelWidth = 75,
   width,
   maxWidth,
 }: AutocompleteBoxProps) {
   return (
     <Box sx={{ width: "100%", display: "flex", alignItems: "center", gap: 2 }}>
-      {/* label fijo para alinear todo */}
       <Box
         component="label"
         htmlFor={lblString}
@@ -28,10 +27,8 @@ export default function AutocompleteBox({
         {lblString}
       </Box>
 
-      {/* campo: ocupa width si lo pasas; si no, 100% */}
       <Autocomplete
         options={options}
-        // solo pongo fullWidth cuando NO pasas `width`
         fullWidth={!width}
         sx={{
           ...(width ? { width } : { width: "100%" }),
