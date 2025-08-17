@@ -62,6 +62,34 @@ export default function CatalogueTable({
   const finalColumns =
     !onEdit && !onDelete ? columns : [...columns, actionColumns];
 
+  function daysUntilExpiration(date: string): number {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Set time to midnight for accurate comparison
+
+    const expirationDate = new Date(date);
+    expirationDate.setHours(0, 0, 0, 0);
+
+    const timeDiff = expirationDate.getTime() - today.getTime();
+    return Math.ceil(timeDiff / (1000 * 3600 * 24));
+  }
+
+  function getRowClassNameByDate(params: any) {
+    //YYYY-MM-DD
+    const date = params.row.expirationDate;
+    if (!date) return "colorless-row";
+
+    const days = daysUntilExpiration(date);
+
+    if (days < 0) {
+      return "red-row"; // Expired
+    } else if (days < 7) {
+      return "orange-row"; // Warning, less than a week
+    } else if (days <= 14) {
+      return "yellow-row"; // Valid, more than a week but less than a month
+    }
+    return "green-row";
+  }
+
   return (
     <Paper
       variant="outlined"
@@ -74,7 +102,14 @@ export default function CatalogueTable({
         initialState={{ pagination: { paginationModel } }}
         pageSizeOptions={[10]}
         checkboxSelection
-        sx={{ border: 0 }}
+        getRowClassName={getRowClassNameByDate}
+        sx={{
+          border: 0,
+          "& .red-row": { backgroundColor: "#f00303ff", color: "white" },
+          "& .orange-row": { backgroundColor: "#fc8b00ff" },
+          "& .yellow-row": { backgroundColor: "#ffff30ff" },
+          "& .green-row": { backgroundColor: "#83e502ff" },
+        }}
       />
     </Paper>
   );
