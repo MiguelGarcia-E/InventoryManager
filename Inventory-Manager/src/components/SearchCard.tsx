@@ -9,7 +9,7 @@ export default function SearchCard() {
     <Container
       maxWidth={false}
       disableGutters
-      sx={{ width: "100%", mx: "auto", mt: 2 }} // 80% de viewport, centrado
+      sx={{ width: "100%", mx: "auto" }}
     >
       <Box
         component="form"
@@ -24,7 +24,9 @@ export default function SearchCard() {
           backgroundColor: "#fff",
         }}
       >
-        <Typography variant="h5">Search Bar</Typography>
+        <Typography variant="h4" sx={{ mb: 1 }}>
+          Search Bar
+        </Typography>
         <TextFieldBox
           lblString="Name"
           fieldString="Product name"
@@ -40,8 +42,8 @@ export default function SearchCard() {
         <Box
           sx={{
             width: "100%",
-            display: "flex", // ← para alinear en fila
-            alignItems: "center", // ← verticalmente centrados
+            display: "flex",
+            alignItems: "center",
             m: 0,
           }}
         >
@@ -58,7 +60,6 @@ export default function SearchCard() {
               fieldString="availability category"
               options={availabilityCategories}
               width="55%"
-              //maxWidth={420} // o width="60%" si prefieres porcentaje
             />
             <Button variant="outlined">Search</Button>
           </Box>
