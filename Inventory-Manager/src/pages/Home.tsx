@@ -1,14 +1,12 @@
 import { Box, Button, Container } from "@mui/material";
-import Dialog from "@mui/material/Dialog";
-import DialogTitle from "@mui/material/DialogTitle";
-
 import SearchCard from "../components/SearchCard";
 
 import { ProductColumns, ProductRows } from "../data/productData";
 import CatalogueTable from "../components/CatalogueTable";
-import React from "react";
+import React, { useEffect } from "react";
 import CreateProductDialog from "../components/CreateProductDialog";
 import MetricsTable from "../components/MetricsTable";
+import { useProductContext } from "../context/ProductContext";
 
 export default function Home() {
   const [openCreate, setOpenCreate] = React.useState(false);
@@ -20,6 +18,21 @@ export default function Home() {
   const handleCloseCreate = () => {
     setOpenCreate(false);
   };
+
+  const {
+    products,
+    isLoading,
+    error,
+    params,
+    setParams,
+    fetchMetrics,
+    metrics,
+  } = useProductContext();
+
+  useEffect(() => {
+    fetchMetrics();
+    console.log("Fetched metrics:", metrics);
+  }, [fetchMetrics]);
 
   return (
     <Container
@@ -59,7 +72,7 @@ export default function Home() {
         />
       </Box>
       <Box sx={{ mx: "auto", width: "100%" }}>
-        <MetricsTable title="Inventory Summary" />
+        <MetricsTable title="Inventory Summary" metrics={metrics ?? []} />
       </Box>
     </Container>
   );

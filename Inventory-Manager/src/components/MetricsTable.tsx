@@ -8,16 +8,19 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { SummaryRows } from "../data/productData";
+import type { CategoryInventorySummary } from "../dataTypes/product";
 
 type MetricsTableProps = {
   title: string;
+  metrics: CategoryInventorySummary[] | null;
 };
 
 export default function MetricsTable({
   title = "Inventory Summary",
+  metrics,
 }: MetricsTableProps) {
-  const rows = SummaryRows;
+  const rows = Array.isArray(metrics) ? metrics : [];
+  console.log("MetricsTable rows:", metrics);
 
   return (
     <Box
@@ -56,17 +59,19 @@ export default function MetricsTable({
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row) => (
+            {rows.map((metric) => (
               <TableRow
-                key={row.category}
+                key={metric.category}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
                 <TableCell component="th" scope="row">
-                  {row.category}
+                  {metric.category}
                 </TableCell>
-                <TableCell align="right">{row.units}</TableCell>
-                <TableCell align="right">{row.value}</TableCell>
-                <TableCell align="right">{row.avg}</TableCell>
+                <TableCell align="right">{metric.totalUnitsInStock}</TableCell>
+                <TableCell align="right">{metric.totalStockValue}</TableCell>
+                <TableCell align="right">
+                  {metric.averageUnitPriceInStock}
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
