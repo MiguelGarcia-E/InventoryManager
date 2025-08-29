@@ -17,6 +17,19 @@ public class ProductService {
         return this.productRepository.getFilteredAndPaginatedProducts(filter, filterTwo, page, direction);
     }
 
+    public PageResponse<Product> search(
+            Integer page, Integer size,
+            String name, String category, String availability,
+            String sortBy, String direction
+    ) {
+        int p = (page == null || page < 1) ? 1 : page;
+        int s = (size == null || size < 1) ? 10 : size;
+        String a = (availability == null || availability.isBlank()) ? "all" : availability;
+        String sb = (sortBy == null || sortBy.isBlank()) ? "id" : sortBy;
+        String dir = "desc".equalsIgnoreCase(direction) ? "desc" : "asc";
+        return productRepository.getByParamsSearch(name, category, a, p, s, sb, dir);
+    }
+
     public Product saveProduct(@Valid Product product) {
         return this.productRepository.save(product);
     }

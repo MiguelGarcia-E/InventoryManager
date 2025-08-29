@@ -11,6 +11,10 @@ import java.util.NoSuchElementException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
+//Hashmap or hashset
+//How do pagination works
+
+
 @Repository
 @Primary
 public class InMemoryCategoryRepository implements CategoryRepository{
@@ -19,6 +23,13 @@ public class InMemoryCategoryRepository implements CategoryRepository{
     private final AtomicLong seq = new AtomicLong(1);
 
     private static String key(String s) { return s == null ? null : s.trim().toLowerCase(); }
+
+    public InMemoryCategoryRepository() {
+        save(new Category("Certificación Agile/IT"));
+        save(new Category("Certificación Cloud"));
+        save(new Category("Certificación DevOps"));
+        save(new Category("Certificación Networking"));
+    }
 
     @Override
     public Category save(Category c) {
@@ -47,7 +58,7 @@ public class InMemoryCategoryRepository implements CategoryRepository{
         String newK = key(c.getName());
         if (newK == null || newK.isBlank()) throw new IllegalArgumentException("Blank name when updating");
 
-        // check other categories for the new name
+
         if (!newK.equals(oldK)) {
             Long clash = nameIndex.get(newK);
             if (clash != null && clash != id) throw new IllegalArgumentException("Category selected name already exists");
@@ -71,7 +82,6 @@ public class InMemoryCategoryRepository implements CategoryRepository{
 
     @Override
     public List<Category> getAllCategories() {
-        // Si quieres orden consistente: por id asc
         return byId.values().stream()
                 .sorted(Comparator.comparing(Category::getId))
                 .toList();

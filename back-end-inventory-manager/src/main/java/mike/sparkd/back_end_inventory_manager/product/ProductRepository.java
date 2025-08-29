@@ -20,4 +20,13 @@ public interface ProductRepository {
     boolean deleteById(long id);
 
     List<CategoryInventorySummary> getInventorySummaryByCategory();
+
+    PageResponse<Product> getByParamsSearch(            String name,
+                                                        String category,
+                                                        String availability,
+                                                        int page,
+                                                        int size,
+                                                        String sortBy,
+                                                        String direction );
+
 }

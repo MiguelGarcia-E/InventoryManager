@@ -1,10 +1,10 @@
 import {
   createContext,
-  use,
   useCallback,
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
@@ -18,6 +18,14 @@ import {
 } from "../dataTypes/product";
 import { api } from "../api/client";
 
+type PageResp<T> = {
+  content: T[];
+  page: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
+};
+
 type ProductContextType = {
   //Products state
   products: Product[];
@@ -27,6 +35,10 @@ type ProductContextType = {
   //Catalogue API call parameters
   params: CatalogueParams;
   setParams: React.Dispatch<React.SetStateAction<CatalogueParams>>;
+
+  //Pagination info
+  totalElements: number;
+  totalPages: number;
 
   //Metrics
   metrics: CategoryInventorySummary[] | null;
@@ -48,40 +60,65 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   );
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
   const [params, setParams] = useState<CatalogueParams>({
     page: 1,
-    filter: "id",
-    filter2: "id",
+    size: 10,
+    name: "",
+    category: "",
+    availability: "all",
+    sortBy: "id",
     direction: "asc",
   });
+
+  const [totalElements, setTotalElements] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+
+  const abortRef = useRef<AbortController | null>(null);
 
   const fetchProducts = useCallback(async () => {
     setIsLoading(true);
     setError(null);
 
+    if (abortRef.current) {
+      abortRef.current.abort();
+    }
+    abortRef.current = new AbortController();
+
     try {
-      const { data } = await api.get<ApiProduct[]>("/products", {
+      const { data } = await api.get<PageResp<ApiProduct>>("/products", {
         params: {
           page: params.page,
-          filter: params.filter,
-          filter2: params.filter2 ?? "id",
-          direction: params.direction,
+          size: params.size,
+          name: params.name || "",
+          category: params.category || "",
+          availability: params.availability || "all",
+          sortBy: params.sortBy || "id",
+          direction: params.direction || "asc",
         },
+        signal: abortRef.current.signal as any,
       });
-      const list = (data ?? []).map(mapApiProduct);
+
+      const list = (data?.content ?? []).map(mapApiProduct);
       setProducts(list);
+      setTotalElements(data?.totalElements ?? 0);
+      setTotalPages(data?.totalPages ?? 0);
+
       return list;
-    } catch (err) {
-      setError((err as Error).message ?? "Unknown error when loading products");
+    } catch (err: any) {
+      if (err.name !== "CanceledError" && err.code !== "ERR_CANCELED") {
+        setError(
+          (err as Error).message ?? "Unknown error when loading products"
+        );
+      }
+      return [];
     } finally {
       setIsLoading(false);
     }
   }, [params]);
 
   const refreshProducts = useCallback(async () => {
-    setIsLoading(true);
     const list = await fetchProducts();
-    setIsLoading(false);
     return list ?? [];
   }, [fetchProducts]);
 
@@ -136,7 +173,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       }
       await fetchMetrics();
     },
-    [fetchProducts]
+    [fetchMetrics, params.page, refreshProducts, setParams]
   );
 
   useEffect(() => {
@@ -150,6 +187,8 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       error,
       params,
       setParams,
+      totalElements,
+      totalPages,
       metrics,
       refreshProducts,
       fetchMetrics,
@@ -162,6 +201,8 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       isLoading,
       error,
       params,
+      totalElements,
+      totalPages,
       metrics,
       refreshProducts,
       fetchMetrics,

@@ -2,6 +2,7 @@
 package mike.sparkd.back_end_inventory_manager.product;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
@@ -18,36 +19,48 @@ public class InMemoryProductRepository implements ProductRepository {
 
     public InMemoryProductRepository() {
         this.size = 0;
-        this.save(new Product("AWS Cloud Practitioner (CLF-C02) - Exam Voucher", "Certificación AWS", 100.0F, LocalDate.of(2026, 6, 30), 40));
-        this.save(new Product("AWS Solutions Architect Associate (SAA-C03) - Exam Voucher", "Certificación AWS", 150.0F, LocalDate.of(2026, 12, 31), 35));
-        this.save(new Product("Google Cloud Associate Cloud Engineer (ACE) - Exam Voucher", "Certificación Google Cloud", 125.0F, LocalDate.of(2026, 9, 30), 30));
-        this.save(new Product("Google Cloud Professional Cloud Architect (PCA) - Exam Voucher", "Certificación Google Cloud", 200.0F, LocalDate.of(2026, 12, 31), 20));
-        this.save(new Product("Microsoft Azure Fundamentals (AZ-900) - Exam Voucher", "Certificación Azure", 99.0F, LocalDate.of(2026, 8, 31), 50));
-        this.save(new Product("Microsoft Azure Administrator (AZ-104) - Exam Voucher", "Certificación Azure", 165.0F, LocalDate.of(2026, 12, 31), 25));
-        this.save(new Product("Kubernetes CKA (Certified Kubernetes Administrator) - Exam Voucher", "Certificación DevOps", 395.0F, LocalDate.of(2026, 11, 30), 10));
-        this.save(new Product("HashiCorp Terraform Associate - Exam Voucher", "Certificación DevOps", 150.0F, LocalDate.of(2026, 10, 31), 18));
-        this.save(new Product("Cisco CCNA 200-301 - Exam Voucher", "Certificación Networking", 300.0F, LocalDate.of(2026, 12, 31), 12));
-        this.save(new Product("Scrum.org PSM I (Professional Scrum Master I) - Exam Attempt", "Certificación Agile", 150.0F, LocalDate.of(2026, 7, 31), 22));
-        this.save(new Product("AWS Developer Associate (DVA-C02) - Exam Voucher", "Certificación AWS", 140.0F, LocalDate.of(2026, 5, 31), 28));
-        this.save(new Product("AWS SysOps Administrator Associate (SOA-C02) - Exam Voucher", "Certificación AWS", 150.0F, LocalDate.of(2026, 4, 30), 24));
-        this.save(new Product("AWS Solutions Architect Professional (SAP-C02) - Exam Voucher", "Certificación AWS", 300.0F, LocalDate.of(2026, 3, 31), 15));
-        this.save(new Product("AWS Security Specialty (SCS-C02) - Exam Voucher", "Certificación AWS", 250.0F, LocalDate.of(2026, 2, 28), 14));
-        this.save(new Product("Google Cloud Professional Data Engineer (PDE) - Exam Voucher", "Certificación Google Cloud", 200.0F, LocalDate.of(2026, 1, 31), 18));
-        this.save(new Product("Google Cloud Professional DevOps Engineer - Exam Voucher", "Certificación Google Cloud", 200.0F, LocalDate.of(2026, 5, 31), 16));
-        this.save(new Product("Google Cloud Professional Security Engineer - Exam Voucher", "Certificación Google Cloud", 200.0F, LocalDate.of(2026, 6, 30), 12));
-        this.save(new Product("Microsoft Azure Security Engineer (AZ-500) - Exam Voucher", "Certificación Azure", 165.0F, LocalDate.of(2026, 3, 31), 22));
-        this.save(new Product("Microsoft Azure DevOps Engineer Expert (AZ-400) - Exam Voucher", "Certificación Azure", 195.0F, LocalDate.of(2026, 4, 30), 18));
-        this.save(new Product("Microsoft Azure Data Engineer (DP-203) - Exam Voucher", "Certificación Azure", 180.0F, LocalDate.of(2026, 5, 31), 20));
-        this.save(new Product("Kubernetes CKAD (Certified Kubernetes Application Developer) - Exam Voucher", "Certificación DevOps", 395.0F, LocalDate.of(2026, 9, 30), 12));
-        this.save(new Product("Kubernetes CKS (Certified Kubernetes Security Specialist) - Exam Voucher", "Certificación DevOps", 395.0F, LocalDate.of(2026, 10, 31), 8));
-        this.save(new Product("HashiCorp Vault Associate - Exam Voucher", "Certificación DevOps", 150.0F, LocalDate.of(2026, 12, 31), 14));
-        this.save(new Product("Linux Foundation LFCS (Linux Foundation Certified SysAdmin) - Exam Voucher", "Certificación Linux", 375.0F, LocalDate.of(2026, 8, 31), 10));
-        this.save(new Product("Red Hat RHCSA (EX200) - Exam Voucher", "Certificación Linux", 400.0F, LocalDate.of(2026, 11, 30), 6));
-        this.save(new Product("Cisco DevNet Associate (DEVASC 200-901) - Exam Voucher", "Certificación Networking", 300.0F, LocalDate.of(2026, 6, 30), 10));
-        this.save(new Product("Cisco CCNP Enterprise (ENCOR 350-401) - Exam Voucher", "Certificación Networking", 400.0F, LocalDate.of(2026, 7, 31), 8));
-        this.save(new Product("CompTIA Security+ (SY0-701) - Exam Voucher", "Certificación Seguridad", 250.0F, LocalDate.of(2026, 12, 31), 25));
-        this.save(new Product("CompTIA Network+ (N10-009) - Exam Voucher", "Certificación Networking", 180.0F, LocalDate.of(2026, 9, 30), 20));
-        this.save(new Product("ITIL 4 Foundation - Exam Voucher", "Certificación ITSM", 200.0F, LocalDate.of(2026, 8, 31), 26));
+        // Loading relative dates
+        final ZoneId MX = ZoneId.of("America/Monterrey");
+        final LocalDate EXP_GT_1M   = LocalDate.now(MX).plusMonths(3);           // > 1 mes
+        final LocalDate EXP_1_TO_2M = LocalDate.now(MX).plusDays(5); // entre 1 y 2 meses
+        final LocalDate EXP_LT_1M   = LocalDate.now(MX).plusDays(12);            // < 1 mes
+
+// =================== Categoría: Certificación Cloud ===================
+        this.save(new Product("AWS Cloud Practitioner (CLF-C02) - Exam Voucher", "Certificación Cloud", 100.0F, null, 0));                 // sin expiración
+        this.save(new Product("Google Cloud Associate Cloud Engineer (ACE) - Exam Voucher", "Certificación Cloud", 125.0F, EXP_GT_1M, 15)); // >1 mes
+        this.save(new Product("Microsoft Azure Fundamentals (AZ-900) - Exam Voucher", "Certificación Cloud", 99.0F, EXP_1_TO_2M, 25));      // 1-2 meses
+        this.save(new Product("AWS Solutions Architect Associate (SAA-C03) - Exam Voucher", "Certificación Cloud", 150.0F, EXP_LT_1M, 0));  // <1 mes
+        this.save(new Product("Google Cloud Professional Cloud Architect (PCA) - Exam Voucher", "Certificación Cloud", 200.0F, EXP_GT_1M, 10));
+        this.save(new Product("Microsoft Azure Administrator (AZ-104) - Exam Voucher", "Certificación Cloud", 165.0F, EXP_1_TO_2M, 12));
+        this.save(new Product("AWS Developer Associate (DVA-C02) - Exam Voucher", "Certificación Cloud", 140.0F, null, 0));               // sin expiración
+        this.save(new Product("AWS SysOps Administrator Associate (SOA-C02) - Exam Voucher", "Certificación Cloud", 150.0F, EXP_LT_1M, 5));
+
+// =================== Categoría: Certificación DevOps ===================
+        this.save(new Product("Kubernetes CKA (Certified Kubernetes Administrator) - Exam Voucher", "Certificación DevOps", 395.0F, EXP_GT_1M, 0));
+        this.save(new Product("Kubernetes CKAD (Certified Kubernetes Application Developer) - Exam Voucher", "Certificación DevOps", 395.0F, EXP_1_TO_2M, 8));
+        this.save(new Product("Kubernetes CKS (Certified Kubernetes Security Specialist) - Exam Voucher", "Certificación DevOps", 395.0F, EXP_LT_1M, 5));
+        this.save(new Product("HashiCorp Terraform Associate - Exam Voucher", "Certificación DevOps", 150.0F, null, 0));                  // sin expiración
+        this.save(new Product("HashiCorp Vault Associate - Exam Voucher", "Certificación DevOps", 150.0F, EXP_1_TO_2M, 7));
+        this.save(new Product("Google Cloud Professional DevOps Engineer - Exam Voucher", "Certificación DevOps", 200.0F, EXP_GT_1M, 4));
+        this.save(new Product("Microsoft Azure DevOps Engineer Expert (AZ-400) - Exam Voucher", "Certificación DevOps", 195.0F, null, 0)); // sin expiración
+
+// =================== Categoría: Certificación Networking ===================
+        this.save(new Product("Cisco CCNA 200-301 - Exam Voucher", "Certificación Networking", 300.0F, EXP_GT_1M, 6));
+        this.save(new Product("Cisco CCNP Enterprise (ENCOR 350-401) - Exam Voucher", "Certificación Networking", 400.0F, EXP_LT_1M, 0));
+        this.save(new Product("Cisco DevNet Associate (DEVASC 200-901) - Exam Voucher", "Certificación Networking", 300.0F, EXP_1_TO_2M, 10));
+        this.save(new Product("CompTIA Network+ (N10-009) - Exam Voucher", "Certificación Networking", 180.0F, null, 0));                 // sin expiración
+        this.save(new Product("CompTIA Security+ (SY0-701) - Exam Voucher", "Certificación Networking", 250.0F, EXP_GT_1M, 12));
+        this.save(new Product("Juniper JNCIA-Junos (JN0-104) - Exam Voucher", "Certificación Networking", 200.0F, EXP_1_TO_2M, 7));
+        this.save(new Product("Aruba Certified Switching Associate (HPE6-A72) - Exam Voucher", "Certificación Networking", 210.0F, null, 0)); // sin expiración
+
+// =================== Categoría: Certificación Agile/IT ===================
+        this.save(new Product("Scrum.org PSM I (Professional Scrum Master I) - Exam Attempt", "Certificación Agile/IT", 150.0F, EXP_LT_1M, 0));
+        this.save(new Product("Scrum.org PSM II (Professional Scrum Master II) - Exam Attempt", "Certificación Agile/IT", 200.0F, EXP_1_TO_2M, 6));
+        this.save(new Product("Scrum.org PSPO I (Professional Scrum Product Owner I) - Exam Attempt", "Certificación Agile/IT", 150.0F, null, 10)); // sin expiración
+        this.save(new Product("ITIL 4 Foundation - Exam Voucher", "Certificación Agile/IT", 200.0F, EXP_GT_1M, 0));
+        this.save(new Product("COBIT 2019 Foundation - Exam Voucher", "Certificación Agile/IT", 220.0F, EXP_1_TO_2M, 5));
+        this.save(new Product("SAFe Agilist (Leading SAFe) - Exam Voucher", "Certificación Agile/IT", 250.0F, null, 0));                 // sin expiración
+        this.save(new Product("PMI Agile Certified Practitioner (PMI-ACP) - Exam Voucher", "Certificación Agile/IT", 300.0F, EXP_GT_1M, 4));
     }
 
     public Product save(Product product) {
@@ -93,6 +106,74 @@ public class InMemoryProductRepository implements ProductRepository {
     public Optional<Product> getProductById(long id) {
         return Optional.ofNullable((Product)this.productsMap.get(id));
     }
+
+    public PageResponse<Product> getByParamsSearch(
+            String name,             // contains (case-insensitive)
+            String category,         // equals (case-insensitive)
+            String availability,     // "in" | "out" | "all"/null
+            int page,                // 1-based
+            int size,                // > 0
+            String sortBy,           // id|name|category|unitPrice|stock|expirationDate
+            String direction         // asc|desc
+    ) {
+        if (page < 1) throw new IllegalArgumentException("page must be >= 1");
+        if (size < 1) size = 10;
+
+        //Filter
+        var stream = productsMap.values().stream();
+
+        if (name != null && !name.isBlank()){
+            final String q = name.trim().toLowerCase();
+            stream = stream.filter(p->{
+                String n = p.getName();
+                return n != null && n.toLowerCase().contains(q);
+            });
+        }
+        if (category != null && !category.isBlank()){
+            final String cat = category.trim();
+            stream = stream.filter(p->cat.equalsIgnoreCase(p.getCategory()));
+        }
+        if(availability != null && !availability.isBlank()){
+            final String a = availability.trim().toLowerCase();
+
+            if ("all".equals(a)) {
+                // sin filtro
+            } else if("in".equalsIgnoreCase(availability)){
+                stream = stream.filter(p->p.getStock() > 0);
+            } else if ("out".equalsIgnoreCase(availability)){
+                stream = stream.filter(p->p.getStock() <= 0);
+            }
+        }
+
+        //Direciton
+        Comparator<Product> cmp = buildSortComparator(sortBy, direction). thenComparing(Product::getId);
+        List<Product> filtered = stream.sorted(cmp).toList();
+
+        //PAginate
+        long total = filtered.size();
+        int from = (page - 1) * size;
+        int to = Math.min(from + size, filtered.size());
+        List<Product> content = (from >= filtered.size()) ? List.of() :filtered.subList(from, to);
+
+        return new PageResponse<>(content, page, size, total);
+    }
+
+    private Comparator<Product> buildSortComparator(String sortBy, String direction) {
+        Comparator<Product> cmp = switch (sortBy == null ? "id" : sortBy) {
+            case "name" -> Comparator.comparing(p -> lower(p.getName()), Comparator.nullsLast(String::compareTo));
+            case "category" -> Comparator.comparing(p -> lower(p.getCategory()), Comparator.nullsLast(String::compareTo));
+            case "unitPrice" -> Comparator.comparingDouble(Product::getUnitPrice);
+            case "stock" -> Comparator.comparingInt(Product::getStock);
+            case "expirationDate" -> Comparator.comparing(Product::getExpirationDate, Comparator.nullsLast(Comparator.naturalOrder()));
+            default -> Comparator.comparing(Product::getId); // id
+        };
+        if ("desc".equalsIgnoreCase(direction)) cmp = cmp.reversed();
+        return cmp;
+    }
+
+    private static String lower(String s) { return s == null ? null : s.toLowerCase(); }
+
+
 
     public List<Product> getFilteredAndPaginatedProducts(String filter, String filterTwo, int page, String direction) {
         if (page < 1) {

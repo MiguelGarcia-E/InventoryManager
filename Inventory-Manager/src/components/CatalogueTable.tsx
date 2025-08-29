@@ -1,4 +1,4 @@
-import { Box, Icon, IconButton, Paper, Typography } from "@mui/material";
+import { Box, IconButton, Typography } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {
@@ -11,7 +11,10 @@ type DataTableProps = {
   title: string;
   rows: any[];
   columns: GridColDef[];
-  paginationModel?: GridPaginationModel;
+  paginationModel: GridPaginationModel;
+  onPaginationModelChange: (m: GridPaginationModel) => void;
+  rowCount: number;
+  loading?: boolean;
   onEdit?: (row: any) => void;
   onDelete?: (row: any) => void;
 };
@@ -20,7 +23,10 @@ export default function CatalogueTable({
   title = "Data Table",
   rows,
   columns,
-  paginationModel = { pageSize: 10, page: 0 },
+  paginationModel,
+  onPaginationModelChange,
+  rowCount,
+  loading = false,
   onDelete,
   onEdit,
 }: DataTableProps) {
@@ -59,6 +65,12 @@ export default function CatalogueTable({
     ),
   };
 
+  const pgModel: GridPaginationModel = paginationModel ?? {
+    page: 0,
+    pageSize: 10,
+  };
+  const rc = Number.isFinite(rowCount) ? rowCount : rows.length;
+
   const finalColumns =
     !onEdit && !onDelete ? columns : [...columns, actionColumns];
 
@@ -76,13 +88,15 @@ export default function CatalogueTable({
   function getRowClassNameByDate(params: any) {
     //YYYY-MM-DD
     const date = params.row.expirationDate;
-    if (!date) return "colorless-row";
+    // console.log(date);
+
+    if (!date || date == "N/A") return "colorless-row";
 
     const days = daysUntilExpiration(date);
 
-    if (days < 0) {
+    if (days <= 0) {
       return "red-row"; // Expired
-    } else if (days < 7) {
+    } else if (days > 0 && days < 7) {
       return "orange-row"; // Warning, less than a week
     } else if (days <= 14) {
       return "yellow-row"; // Valid, more than a week but less than a month
@@ -107,9 +121,13 @@ export default function CatalogueTable({
       <DataGrid
         rows={rows} //Data
         columns={finalColumns} //Headers
-        initialState={{ pagination: { paginationModel } }}
+        loading={loading}
+        //Server-side pagination
+        paginationMode="server"
+        paginationModel={pgModel}
+        onPaginationModelChange={onPaginationModelChange}
+        rowCount={rc}
         pageSizeOptions={[10]}
-        checkboxSelection
         getRowClassName={getRowClassNameByDate}
         sx={{
           border: 0,
@@ -120,10 +138,11 @@ export default function CatalogueTable({
             fontWeight: 600,
           }, // headers
           "& .MuiTablePagination-root": { fontSize: "0.9rem" }, // paginador
-          "& .red-row": { backgroundColor: "#f00303ff", color: "white" },
-          "& .orange-row": { backgroundColor: "#fc8b00ff" },
-          "& .yellow-row": { backgroundColor: "#ffff30ff" },
-          "& .green-row": { backgroundColor: "#83e502ff" },
+          "& .colorless-row": { backgroundColor: "transparent" },
+          "& .red-row": { backgroundColor: "#ff6868ff", color: "white" },
+          "& .orange-row": { backgroundColor: "#ffb458ff" },
+          "& .yellow-row": { backgroundColor: "#ffff6cff" },
+          "& .green-row": { backgroundColor: "#b8ff5bb5" },
         }}
       />
     </Box>

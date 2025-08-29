@@ -7,6 +7,8 @@ interface AutocompleteBoxProps {
   labelWidth?: number | string; // ancho del label fijo
   width?: number | string; // ancho del campo
   maxWidth?: number | string; // max ancho del campo
+  value?: string | null; // valor seleccionado
+  onChange?: (event: React.SyntheticEvent, value: string | null) => void;
 }
 
 export default function AutocompleteBox({
@@ -16,6 +18,8 @@ export default function AutocompleteBox({
   labelWidth = 75,
   width,
   maxWidth,
+  value = null,
+  onChange,
 }: AutocompleteBoxProps) {
   return (
     <Box sx={{ width: "100%", display: "flex", alignItems: "center", gap: 2 }}>
@@ -29,11 +33,13 @@ export default function AutocompleteBox({
 
       <Autocomplete
         options={options}
+        value={value || null}
         fullWidth={!width}
         sx={{
           ...(width ? { width } : { width: "100%" }),
           ...(maxWidth ? { maxWidth } : {}),
         }}
+        onChange={onChange}
         renderInput={(params) => (
           <TextField {...params} label={`Select a ${fieldString}`} />
         )}

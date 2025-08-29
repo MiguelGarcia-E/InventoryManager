@@ -20,7 +20,7 @@ export default function MetricsTable({
   metrics,
 }: MetricsTableProps) {
   const rows = Array.isArray(metrics) ? metrics : [];
-  console.log("MetricsTable rows:", metrics);
+  // console.log("MetricsTable rows:", metrics);
 
   return (
     <Box

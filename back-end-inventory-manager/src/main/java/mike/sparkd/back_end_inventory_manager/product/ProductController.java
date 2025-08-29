@@ -7,15 +7,7 @@ import java.net.URI;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(
@@ -29,9 +21,18 @@ public class ProductController {
         this.productService = productService;
     }
 
+
     @GetMapping
-    public List<Product> getProductsFilteredAndPaginated(@RequestParam(name = "page",defaultValue = "1") @Positive int page, @RequestParam(name = "filter",defaultValue = "id") String filter, @RequestParam(name = "filter2",defaultValue = "") String filter2, @RequestParam(name = "direction",defaultValue = "asc") String direction) {
-        return this.productService.getProductFilteredAndPaginated(page, filter, filter2, direction);
+    public PageResponse<Product> getSearchedProducts(
+            @RequestParam(name="page", defaultValue="1") int page,
+            @RequestParam(name="size", defaultValue="10") int size,
+            @RequestParam(name="name", required=false) String name,
+            @RequestParam(name="category", required=false) String category,
+            @RequestParam(name="availability", required=false, defaultValue="all") String availability, // in|out|all
+            @RequestParam(name="sortBy", defaultValue="id") String sortBy, // id|name|unitPrice|stock|expirationDate
+            @RequestParam(name="direction", defaultValue="asc") String direction
+    ) {
+        return productService.search(page, size, name, category, availability, sortBy, direction);
     }
 
     @GetMapping({"/metrics"})

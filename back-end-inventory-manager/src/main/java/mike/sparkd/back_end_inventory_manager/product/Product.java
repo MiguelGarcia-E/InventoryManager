@@ -19,7 +19,7 @@ public class Product {
     private @NotBlank String category;
     private @DecimalMin(
             value = "0.0",
-            inclusive = false,
+            inclusive = true,
             message = "unitPrice must be > 0"
     ) float unitPrice;
     private @FutureOrPresent(

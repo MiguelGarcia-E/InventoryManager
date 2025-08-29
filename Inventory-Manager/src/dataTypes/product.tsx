@@ -2,9 +2,12 @@ export type SortingDirection = "asc" | "desc";
 
 export type CatalogueParams = {
   page: number;
-  filter: string;
-  filter2: string;
+  category: string;
+  name: string;
+  availability: "all" | "in" | "out";
+  sortBy: string;
   direction: SortingDirection;
+  size: number;
 };
 
 export type CategoryInventorySummary = {

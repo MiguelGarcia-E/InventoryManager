@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/categories")
@@ -21,31 +22,16 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
 
-    // GET /api/v1/categories?page=1&size=10&sort=id&direction=asc
+    // GET /api/v1/categories
     @GetMapping
-    public List<Category> list(
-            @RequestParam(defaultValue = "1") @Positive int page,
-            @RequestParam(defaultValue = "10") @Positive int size,
-            @RequestParam(defaultValue = "id") String sort,
-            @RequestParam(defaultValue = "asc") String direction
-    ) {
-        List<Category> all = categoryService.getAllCategories();
-
-        Comparator<Category> cmp = switch (sort) {
-            case "name" -> Comparator.comparing(Category::getName, String.CASE_INSENSITIVE_ORDER);
-            default -> Comparator.comparing(Category::getId);
-        };
-
-        if ("desc".equalsIgnoreCase(direction)) {
-            cmp = cmp.reversed();
-        }
-
-        List<Category> sorted = all.stream().sorted(cmp).toList();
-
-        int from = (page - 1) * size;
-        int to = Math.min(from + size, sorted.size());
-
-        return (from >= sorted.size()) ? List.of() : sorted.subList(from, to);
+    public List<CategoryReadDto> list() {
+        return categoryService.getAllCategories().stream()
+                .sorted(Comparator.comparing(
+                        c -> Optional.ofNullable(c.getName()).orElse(""),
+                        String.CASE_INSENSITIVE_ORDER
+                ))
+                .map(CategoryReadDto::from)
+                .toList();
     }
 
     // GET /api/v1/categories/{id}
@@ -68,7 +54,7 @@ public class CategoryController {
     @PutMapping("/{id}")
     public Category update(@PathVariable @Positive long id,
                            @RequestBody @Valid Category category) {
-        category.setId(id); // aseguramos que el id del path mande
+        category.setId(id);
         return categoryService.updateCategory(category);
     }
 

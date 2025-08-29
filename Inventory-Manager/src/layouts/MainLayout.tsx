@@ -1,6 +1,7 @@
 import { Outlet, Link } from "react-router-dom";
 import { CssBaseline, Container, Box } from "@mui/material";
 import TopBar from "../components/TopBar";
+import Footer from "../components/Footer";
 
 export default function MainLayout() {
   return (
@@ -25,6 +26,7 @@ export default function MainLayout() {
           <Outlet />
         </Box>
       </Container>
+      <Footer></Footer>
     </>
   );
 }
