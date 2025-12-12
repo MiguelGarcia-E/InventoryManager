@@ -41,10 +41,6 @@ export default function ProductDialog({
 }: ProductDialogProps) {
   const { createProduct, updateProduct } = useProductContext();
 
-  const handleClose = () => {
-    onClose();
-  };
-
   const [catOpen, setCatOpen] = useState(false); // create
   const [editCatOpen, setEditCatOpen] = useState(false); // edit
 
