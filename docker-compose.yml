@@ -1,0 +1,28 @@
+services:
+  backend:
+    build:
+      context: ./back-end-inventory-manager
+      dockerfile: Dockerfile
+    container_name: inventory-backend
+    ports:
+      - "9090:9090"             # host 9090 -> contenedor 9090
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+    networks:
+      - app-net
+
+  frontend:
+    build:
+      context: ./Inventory-Manager
+      dockerfile: Dockerfile
+    container_name: inventory-frontend
+    ports:
+      - "8080:80"               # host 8080 -> contenedor 80 (Nginx)
+    depends_on:
+      - backend
+    networks:
+      - app-net
+
+networks:
+  app-net:
+    driver: bridge

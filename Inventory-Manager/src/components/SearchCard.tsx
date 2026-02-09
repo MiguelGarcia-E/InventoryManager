@@ -19,7 +19,7 @@ export default function SearchCard({
   value: Params;
   onApply: (v: Params) => void;
 }) {
-  const { categories, loading, error } = useCategories();
+  const { categories, loading } = useCategories();
 
   const productCategories = useMemo(
     () =>
