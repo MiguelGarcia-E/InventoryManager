@@ -9,7 +9,7 @@ pipeline {
                 //     // Ejecuta comando de contruccion de Maven
                 //     // sh 'mvn -B test'
                 //     sh 'docker version'
-                }
+                
             }
             post {
                 always {
