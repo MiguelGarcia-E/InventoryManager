@@ -11,14 +11,14 @@ pipeline {
                 //     sh 'docker version'
                 
             }
-            post {
-                always {
-                    // dir('back-end-inventory-manager') {
-                    //     // Publica los resultados de las pruebas unitarias
-                    //     // junit '**/target/surefire-reports/*.xml'
-                    // }
-                }
-            }
+            // post {
+            //     always {
+            //         // dir('back-end-inventory-manager') {
+            //         //     // Publica los resultados de las pruebas unitarias
+            //         //     // junit '**/target/surefire-reports/*.xml'
+            //         // }
+            //     }
+            // }
         }
     }
 }
