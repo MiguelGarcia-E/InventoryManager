@@ -20,7 +20,21 @@ pipeline {
                     }
                 }
             }
-
+        }
+        stage ('Build Frontend') {
+            agent {
+                docker {
+                    image 'node:20-alpine'
+                }
+            }
+            steps {
+                dir ('Inventory-Manager') {
+                    sh 'node -v'
+                    sh 'npm -v'
+                    sh 'npm ci'
+                    sh 'npm run build'
+                }
+            }
         }
     }
 }
