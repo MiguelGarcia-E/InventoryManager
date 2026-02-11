@@ -3,23 +3,27 @@ services:
     build:
       context: ./back-end-inventory-manager
       dockerfile: Dockerfile
-    container_name: inventory-backend
     ports:
-      - "9090:9090"             # host 9090 -> contenedor 9090
+      - "9090:9090"
     environment:
       - SPRING_PROFILES_ACTIVE=prod
     networks:
       - app-net
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:9090/actuator/health/readiness | grep -q '\"status\":\"UP\"'"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
 
   frontend:
     build:
       context: ./Inventory-Manager
       dockerfile: Dockerfile
-    container_name: inventory-frontend
     ports:
-      - "8080:80"               # host 8080 -> contenedor 80 (Nginx)
+      - "8080:80"
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     networks:
       - app-net
 
